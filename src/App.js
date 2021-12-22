@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
 
-function App() {
+
+import './App.css';
+import { CardList } from './components/card-list/card-list';
+import { SearchBox } from './components/search-box/search-box';
+
+class App extends Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      members: [],
+      searchField: ''
+    };
+
+  }
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(response => response.json())
+    .then(users => this.setState({members: users}));
+  }
+
+  handleChange = (e) => {
+    this.setState({searchField: e.target.value})
+  };
+
+  render() {
+    const { members, searchField } = this.state;
+    const filteredMembers = members.filter(member => member.name.toLowerCase().includes(searchField.toLowerCase()))
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Members UniSong</h1>
+        <SearchBox placeholder="search monsters" handleChange={this.handleChange}/>
+      <CardList members={filteredMembers}></CardList>
     </div>
   );
+}
 }
 
 export default App;
